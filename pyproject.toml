@@ -19,4 +19,4 @@ pco = "proactive_coding_orchestrator.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-proactive_coding_orchestrator = ["web/*.html", "web/*.css", "web/*.js"]
+proactive_coding_orchestrator = ["web/*.html", "web/*.css", "web/*.js", "web/*.png"]

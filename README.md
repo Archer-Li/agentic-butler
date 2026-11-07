@@ -1,6 +1,6 @@
 # Agentic Butler
 
-![Agentic Butler. Project memory. Human approval.](docs/assets/agentic-butler.svg)
+![Agentic Butler. Project memory. Human approval.](docs/assets/readme-banner.png)
 
 Agentic Butler is a local workflow companion for **Codex and Claude Code**. It gives you one place to review workflow suggestions and project memory, so you can decide what runs and what the next session should remember.
 

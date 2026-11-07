@@ -166,7 +166,7 @@ class Handler(BaseHTTPRequestHandler):
     def send(self, status, content, mime="application/json"):
         raw = content if isinstance(content, bytes) else json.dumps(content, ensure_ascii=True).encode()
         self.send_response(status)
-        self.send_header("Content-Type", mime + "; charset=utf-8")
+        self.send_header("Content-Type", mime if mime == "image/png" else mime + "; charset=utf-8")
         self.send_header("Content-Length", str(len(raw)))
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
@@ -215,6 +215,8 @@ class Handler(BaseHTTPRequestHandler):
             self.send(200, page.encode(), "text/html")
         elif path in ("/app.js", "/memory.js", "/style.css"):
             self.send(200, (ASSETS / path[1:]).read_bytes(), "text/javascript" if path.endswith(".js") else "text/css")
+        elif path in ("/brand-icon.png", "/favicon.png"):
+            self.send(200, (ASSETS / path[1:]).read_bytes(), "image/png")
         else:
             self.send(404, {"error": "not found"})
 
