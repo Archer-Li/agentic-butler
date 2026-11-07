@@ -2,7 +2,7 @@
   "version": 1,
   "database": "pco.sqlite3",
   "appearance": {
-    "accent": "#8b5cf6",
+    "accent": "#d71941",
     "compact": true
   },
   "notifications": {

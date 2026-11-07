@@ -9,7 +9,7 @@ import re
 DEFAULTS = {
     "version": 1,
     "database": "pco.sqlite3",
-    "appearance": {"accent": "#8b5cf6", "compact": True},
+    "appearance": {"accent": "#d71941", "compact": True},
     "notifications": {"enabled": False, "backend": "browser", "cooldown_seconds": 60,
                       "quiet_hours": None},
     "approval": {"ttl_minutes": 60, "execution": "preview_only"},

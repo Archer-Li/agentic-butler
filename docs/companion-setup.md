@@ -4,7 +4,7 @@ The companion is a real local interface backed by the existing SQLite approval e
 
 ## Install (Windows / macOS)
 
-Python 3.10+ is required. Create a virtual environment, then install from this private checkout:
+Python 3.10+ is required. Create a virtual environment, then install from this checkout:
 
 ```powershell
 # Windows PowerShell
@@ -58,7 +58,7 @@ Both receivers filter the exact configured workspace and enabled tool before ope
 
 | Section | Supported settings |
 | --- | --- |
-| `appearance` | Six-digit `accent` color; `compact` initial strip mode |
+| `appearance` | Six-digit `accent` color (default `#d71941`); `compact` initial strip mode |
 | `projects` | Unique project labels, absolute workspaces, enabled `codex`/`claude` tools |
 | `approval` | 1–120 minute TTL; execution must remain `preview_only` |
 | `agent` | Disabled by default; Codex text-only provider; timeout 1–120 seconds; per-task approval still required |
