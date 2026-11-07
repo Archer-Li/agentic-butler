@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "database": "pco.sqlite3",
+  "appearance": {
+    "accent": "#8b5cf6",
+    "compact": true
+  },
+  "notifications": {
+    "enabled": false,
+    "backend": "browser",
+    "cooldown_seconds": 60,
+    "quiet_hours": null
+  },
+  "approval": {
+    "ttl_minutes": 60,
+    "execution": "preview_only"
+  },
+  "triage": {
+    "enabled": false,
+    "consent": false,
+    "max_calls": 10
+  },
+  "projects": [],
+  "agent": {
+    "enabled": false,
+    "provider": "codex",
+    "timeout_seconds": 60
+  },
+  "memory": {
+    "enabled": false,
+    "projects": [],
+    "bundle_bytes": 4096,
+    "max_records": 64,
+    "max_observations": 1000,
+    "debounce_seconds": 30
+  }
+}

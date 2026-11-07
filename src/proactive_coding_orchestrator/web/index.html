@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Orchestrator · Local companion</title><link rel="stylesheet" href="/style.css"></head>
+<body><main>
+<header id="strip"><div class="identity"><span class="mark">o</span><strong>Orchestrator</strong><span class="pill">LOCAL</span></div><span id="summary" role="status">Connecting to local state…</span><button id="expand" aria-expanded="true">Collapse</button></header>
+<div id="content">
+<div class="intro"><div><p class="eyebrow">YOUR WORKFLOW COMPANION</p><h1>A little less to keep in your head.</h1><p>Review useful suggestions from your coding tools. You decide what happens next.</p></div><span class="preview-tag">Workflow previews · live text opt-in</span></div>
+<div id="error" role="alert" hidden></div>
+<nav aria-label="Views"><button data-tab="review" class="active">Review queue <span id="count">0</span></button><button data-tab="agent">Live text tasks</button><button data-tab="memory">Experience updates <span id="memory-count">0</span></button><button data-tab="activity">Activity</button><button data-tab="connections">Tools & settings</button></nav>
+<section id="review"><div class="section-title"><h2>Needs your decision</h2><span>No actions run automatically</span></div><p id="notification-result" role="status"></p><div id="queue"></div><article id="detail" hidden></article></section>
+<section id="agent" hidden><h2>Live Codex text tasks</h2><p id="agent-policy">Disabled by default. Text goes to OpenAI through your existing Codex login. No tools or source files are supplied. Billing is not capped by the output or time limits.</p><label>Personal project <select id="agent-project"></select></label><label>Task text <textarea id="agent-prompt" rows="4" maxlength="8000"></textarea></label><button id="agent-prepare">Prepare for review</button><div id="agent-jobs"></div></section>
+<section id="memory" hidden>
+<h2>Project memory</h2><p>Capture useful findings, review learning drafts, and carry approved experience into future work.</p>
+<p id="memory-status" role="status"></p><label>Memory project <select id="memory-project"></select></label>
+<div id="memory-controls"><details><summary>Save a work checkpoint</summary>
+<label>Session <input id="memory-session" value="manual-session" maxlength="80"></label>
+<label>Task or attempt ID <input id="memory-incident" value="manual-attempt" maxlength="80"></label>
+<label>Finding <textarea id="memory-note" rows="3" maxlength="500"></textarea></label>
+<label>Applies when <input id="memory-conditions" maxlength="100"></label>
+<label><input id="memory-verified" type="checkbox"> I verified this finding</label>
+<label>Verification evidence <input id="memory-verification" maxlength="160"></label>
+<button id="memory-save">Save checkpoint and queue review</button>
+<p>Verified findings can become drafts. Other checkpoints stay available for handoff and review.</p></details>
+<div class="actions"><button id="memory-dream">Prepare local learning draft</button><button id="memory-semantic">Prepare semantic draft task</button><select id="memory-revision" aria-label="Revision to restore"></select><button id="memory-rollback">Prepare restore</button></div>
+<label><input id="memory-allow-pinned" type="checkbox"> Include pinned guidance in the proposed change</label>
+<div id="memory-editor" hidden><h3>Revise guidance</h3><textarea id="memory-edit-text" rows="3" maxlength="500"></textarea><input id="memory-edit-conditions" aria-label="Updated applicability" maxlength="100"><button id="memory-edit-save">Prepare revision</button><button id="memory-edit-cancel">Cancel editing</button></div></div>
+<h2>Learning drafts</h2><div id="memory-drafts"></div><h2>Approved guidance</h2><div id="memory-records"></div><h2>Working checkpoints</h2><div id="memory-checkpoints"></div></section>
+<section id="activity" hidden><h2>Workflow history</h2><div id="history"></div></section>
+<section id="connections" hidden><h2>Connected tools</h2><p>Recent events show observation, not a live connection or authenticated identity.</p><div id="adapters"></div><h2>Preferences</h2><pre id="settings"></pre><button id="permission">Enable browser notifications</button><button id="test-native">Test native notification</button><p id="native-result" role="status"></p><p>Notifications only open this review panel. They never approve or execute a workflow. Edit the application JSON file and restart to change preferences.</p></section>
+<footer><span id="health">Checking local worker…</span><span>Companion panel · native Codex status-bar embedding is not installed</span></footer>
+</div></main><script nonce="__NONCE__">window.PCO_TOKEN="__TOKEN__";</script><script src="/app.js"></script><script src="/memory.js"></script></body></html>
