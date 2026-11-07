@@ -28,7 +28,7 @@ def render(config_path, project, payload):
         return ''
     database = Path(config['database'])
     if not database.is_file():
-        return '[PCO] ' + project + ' | No events yet'
+        return '[Agentic Butler] ' + project + ' | No events yet'
     conn = sqlite3.connect(database.as_uri() + '?mode=ro', uri=True, timeout=0.2)
     try:
         rows = conn.execute('''SELECT p.status,COUNT(*) FROM proposals p JOIN events e ON e.id=p.event_id
@@ -41,7 +41,7 @@ def render(config_path, project, payload):
     color = config['appearance']['accent'].lstrip('#')
     rgb = ';'.join(str(int(color[i:i+2], 16)) for i in (0, 2, 4))
     # No provider text, URLs or control characters can enter the terminal.
-    return f'\x1b[38;2;{rgb}m[PCO] {project} | {counts.get("pending", 0)} need review | {counts.get("approved", 0)} preview ready\x1b[0m'
+    return f'\x1b[38;2;{rgb}m[Agentic Butler] {project} | {counts.get("pending", 0)} need review | {counts.get("approved", 0)} preview ready\x1b[0m'
 
 
 def snippet(config_path, project, shell):

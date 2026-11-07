@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="340" viewBox="0 0 1120 340" role="img" aria-labelledby="title desc">
+  <title id="title">Agentic Butler</title>
+  <desc id="desc">Project memory. Human approval. A lavender bow tie with a mint checkpoint at its center.</desc>
+  <defs>
+    <linearGradient id="surface" x2="1" y2="1">
+      <stop stop-color="#19152a"/>
+      <stop offset="1" stop-color="#100e18"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".88" cy=".22" r=".76">
+      <stop stop-color="#4a2d68" stop-opacity=".52"/>
+      <stop offset="1" stop-color="#281b3e" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="silk" x1="0" y1="1" x2="1" y2="0">
+      <stop stop-color="#8f65ff"/>
+      <stop offset="1" stop-color="#e0c8ff"/>
+    </linearGradient>
+    <clipPath id="frame">
+      <rect x="1" y="1" width="1118" height="338" rx="30"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#frame)">
+    <rect width="1120" height="340" fill="url(#surface)"/>
+    <rect width="1120" height="340" fill="url(#glow)"/>
+    <g fill="none" stroke="#c2a0f8" stroke-width="1.4">
+      <path d="M806 344 939 152h83l106-151m-272 343 121-174h83l68-98m-206 272 79-114h73l54-77" opacity=".25"/>
+      <path d="M898 341 1120 21m-176 320L1120 87" opacity=".13"/>
+    </g>
+    <rect x="933" y="146" width="12" height="12" rx="3" fill="#c1a2ff"/>
+    <rect x="995" y="224" width="12" height="12" rx="3" fill="#6ef2cd"/>
+    <rect x="989" y="218" width="24" height="24" rx="7" fill="none" stroke="#6ef2cd" opacity=".3"/>
+    <g transform="translate(74 97) scale(1.14)">
+      <rect x="1" y="1" width="126" height="126" rx="29" fill="#211a35" stroke="#604e7c" stroke-width="2"/>
+      <path d="M26 40q-5-2-5 3v42q0 5 5 3l28-15V55zm76 0q5-2 5 3v42q0 5-5 3L74 73V55z" fill="url(#silk)"/>
+      <rect x="58" y="55" width="12" height="18" rx="3.5" fill="#6ef2cd"/>
+    </g>
+    <g font-family="Segoe UI, Arial, sans-serif">
+      <text x="250" y="119" fill="#c4adf4" font-size="14" font-weight="600" letter-spacing="3.2">LOCAL WORKFLOW COMPANION</text>
+      <text x="246" y="190" fill="#f9f5ff" font-size="77" font-weight="700" letter-spacing="-2.9">Agentic <tspan fill="#cfb5ff">Butler</tspan></text>
+      <text x="251" y="229" fill="#cec2df" font-size="25">Project memory. Human approval.</text>
+    </g>
+  </g>
+  <rect x="1" y="1" width="1118" height="338" rx="30" fill="none" stroke="#493960" stroke-width="2"/>
+</svg>

@@ -111,7 +111,7 @@ def desktop_notice(count: int) -> None:
     root = tkinter.Tk()
     root.withdraw()
     try:
-        messagebox.showinfo("Proactive Coding Orchestrator",
+        messagebox.showinfo("Agentic Butler",
                             f"{count} proposal(s) await review. Open pco list to inspect and approve.", parent=root)
     finally:
         root.destroy()

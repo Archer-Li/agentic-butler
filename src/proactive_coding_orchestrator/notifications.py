@@ -108,7 +108,7 @@ def native_notice(count: int, url: str) -> dict:
     message = f"{count} workflow proposal(s) need your review. Approval is required."
     if sys.platform == "win32":
         xml = ('<toast activationType="protocol" launch="' + html.escape(url, quote=True)
-            + '"><visual><binding template="ToastGeneric"><text>Orchestrator</text><text>'
+            + '"><visual><binding template="ToastGeneric"><text>Agentic Butler</text><text>'
             + message + '</text></binding></visual></toast>')
         # Fixed program; XML arrives on stdin, never interpolated into shell code.
         script = WINDOWS_NOTIFIER + """
@@ -132,11 +132,11 @@ $notifier.Show($toast)
     elif sys.platform == "darwin":
         notifier = shutil.which("terminal-notifier")
         if notifier:
-            subprocess.run([notifier, "-title", "Orchestrator", "-message", message, "-open", url],
+            subprocess.run([notifier, "-title", "Agentic Butler", "-message", message, "-open", url],
                            capture_output=True, timeout=10, check=True)
         else:
             # Built-in fallback delivers a notice but cannot deep-link on click.
-            script = 'on run argv\ndisplay notification (item 1 of argv) with title "Orchestrator"\nend run'
+            script = 'on run argv\ndisplay notification (item 1 of argv) with title "Agentic Butler"\nend run'
             subprocess.run(["/usr/bin/osascript", "-e", script, message], capture_output=True, timeout=10, check=True)
     else:
         raise ValueError("native delivery supports Windows/macOS; use browser notifications elsewhere")

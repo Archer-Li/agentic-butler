@@ -21,7 +21,7 @@ DEFAULT_DB = Path.home() / ".local" / "share" / "pco" / "state.sqlite3"
 
 
 def parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="pco", description="Approval-first proactive coding orchestrator")
+    p = argparse.ArgumentParser(prog="pco", description="Agentic Butler, an approval-first coding workflow companion")
     p.add_argument("--db", default=os.environ.get("PCO_DB", str(DEFAULT_DB)), help="SQLite state file")
     p.add_argument("--config", help="versioned application JSON configuration")
     sp = p.add_subparsers(dest="command", required=True)

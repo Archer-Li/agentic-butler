@@ -1,12 +1,14 @@
-# Proactive Coding Orchestrator
+# Agentic Butler
 
-Project memory now connects work checkpoints, local dreaming drafts, reviewed revisions and bounded startup context. An optional approved Codex text task can produce semantic drafts for a separate memory review. See [memory setup](docs/memory-setup.md) and the [design](docs/project-memory-design.md).
+![Agentic Butler. Project memory. Human approval.](docs/assets/agentic-butler.svg)
 
-A local workflow companion for **Codex and Claude Code**. Keep a compact colored status strip beside your work, review proactive suggestions, and decide what happens next.
+Agentic Butler is a local workflow companion for **Codex and Claude Code**. It gives you one place to review workflow suggestions and project memory, so you can decide what runs and what the next session should remember.
+
+Save work checkpoints, review proposed updates to project memory, and carry approved guidance into the next session. An optional Codex text task can draft a memory update for separate review. See [memory setup](docs/memory-setup.md) and the [design](docs/project-memory-design.md).
 
 **Developer preview (v0.3.dev1).** Workflow execution is preview-only. Explicitly approved Codex text tasks are available as an opt-in. This is an independently developed personal project, licensed under the [MIT License](LICENSE).
 
-![Local companion with synthetic personal-project data](docs/assets/companion.jpg)
+[Companion screenshot from the first developer preview](docs/assets/companion.jpg)
 
 ## What you can use now
 
@@ -56,7 +58,7 @@ Review the generated snippets before merging into host settings; the tool never 
 | Codex and Claude configured callback receivers | Implemented; real subprocess delivery with synthetic payloads tested |
 | Live Codex completion callback | Verified on Windows with Codex 0.165.0-alpha.1.2 and an actual tool-free turn; live Claude Stop remains unverified |
 | Claude Code native status line | Implemented; Windows shell/stdin protocol verified; host binary unavailable for in-host display test |
-| Windows/macOS/Linux Python support | CI matrix configured; check the current [Actions results](https://github.com/Archer-Li/proactive-coding-orchestrator/actions) |
+| Windows/macOS/Linux Python support | CI matrix configured; check the current [Actions results](https://github.com/Archer-Li/agentic-butler/actions) |
 | Browser notification click-through | Implemented; requires an opted-in configuration and browser permission |
 | Native Windows/macOS notifications | Windows display and OS click-through confirmed on retry with matching receipt; earlier missed notice retained in evidence; macOS display/click-through unverified |
 | Native Codex desktop status-bar injection | Not implemented; no confirmed public insertion API |
