@@ -1,60 +1,51 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" role="img" aria-labelledby="title">
-  <title id="title">Agentic Butler, framed at the collar with a red bow tie and a terminal held in both hands</title>
+  <title id="title">Agentic Butler, a red bow tie and a gloved hand holding three fanned terminals</title>
   <defs>
-    <clipPath id="butler-emblem-crop">
-      <rect x="3" y="3" width="194" height="194" rx="18"/>
-    </clipPath>
+    <clipPath id="butler-emblem-crop"><circle cx="100" cy="100" r="98"/></clipPath>
   </defs>
   <g clip-path="url(#butler-emblem-crop)">
-    <rect width="200" height="200" fill="#09090b"/>
-    <!-- Framing light, with the crop starting at the collar -->
-    <path d="M0 116 89 0h20L0 143ZM200 119l-62 81h12l50-65Z" fill="#f9314e"/>
-    <path d="M0 158 122 0m78 145-42 55" fill="none" stroke="#fffaf3" stroke-width="2"/>
-    <!-- Torso, stepped shoulders, and waistcoat -->
-    <path d="M14 202l8-104c2-17 9-29 23-37l22-12 6-26 36-3 12 23 20 11c12 6 17 17 19 29l12 119Z"
-          fill="#09090b" stroke="#fffaf3" stroke-width="3.5" stroke-linejoin="round"/>
-    <path d="M66 34 74 5h38l-1 23-17 80Z" fill="#fffaf3"/>
-    <path d="M73 0h41l-4 17-16 14-21-11Z" fill="#09090b"/>
-    <path d="M73 23l16 15-9 12-13-16Zm37-4-16 19 9 9 12-18Z" fill="#fffaf3" stroke="#09090b" stroke-width="2.7" stroke-linejoin="round"/>
-    <path d="M66 48 49 67l15 6-8 10 39 42m29-80 13 18-16 5 6 10-30 48"
-          fill="none" stroke="#fffaf3" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M66 92l29 33 25-33-3 40-22 30-24-24Z" fill="#09090b"/>
-    <path d="M94 137v57m12-23h21" fill="none" stroke="#fffaf3" stroke-width="2.6" stroke-linecap="round"/>
-    <circle cx="102" cy="154" r="2.5" fill="#fffaf3"/>
-    <circle cx="102" cy="169" r="2.5" fill="#fffaf3"/>
-    <!-- Back arm rises to the outer edge of the terminal -->
-    <path d="M140 55c12 4 20 14 22 25l8 27-13 27-16-6-14-29"
-          fill="#09090b" stroke="#fffaf3" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="m153 111 16-13 7 11-16 16Z" fill="#fffaf3" stroke="#09090b" stroke-width="2.7"/>
-    <path d="m163 110 5-10 5-13c1-3 5-4 7-1l1 4 4-2c4-1 7 3 6 6l-5 9-11 12Z"
-          fill="#fffaf3" stroke="#09090b" stroke-width="2.7" stroke-linejoin="round"/>
-    <!-- Front elbow is bent, with the forearm braced across the chest -->
-    <path d="M44 63C27 71 19 84 17 104l-2 39c-1 17 7 30 21 33 8 2 17-1 25-6l77-48-14-25-76 41-1-36"
-          fill="#09090b" stroke="#fffaf3" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="m29 156 12-5m60-30 9-5" fill="none" stroke="#fffaf3" stroke-width="2.6" stroke-linecap="round"/>
-    <path d="m117 101 11-7 14 25-11 7Z" fill="#fffaf3" stroke="#09090b" stroke-width="2.7" stroke-linejoin="round"/>
-    <circle cx="122" cy="112" r="2.3" fill="#09090b"/>
-    <path d="m129 97 10-8 7-8c2-2 6-1 7 2l-2 6 9-4c3-2 6 0 6 3 3-1 6 1 5 4 3-1 6 2 4 5l-7 10-27 14Z"
-          fill="#fffaf3" stroke="#09090b" stroke-width="2.7" stroke-linejoin="round"/>
-    <!-- Terminal window, with both hands visible around the lower edge -->
-    <rect x="124" y="57" width="64" height="48" rx="6" fill="#09090b" stroke="#fffaf3" stroke-width="3.4"/>
-    <path d="M124 68h64" fill="none" stroke="#fffaf3" stroke-width="2.4"/>
-    <circle cx="131" cy="62.5" r="1.8" fill="#f9314e"/>
-    <circle cx="137" cy="62.5" r="1.8" fill="#fffaf3"/>
-    <path d="m136 78 9 6.5-9 6.5m17 0h15" fill="none" stroke="#fffaf3" stroke-width="4.4" stroke-linecap="square" stroke-linejoin="round"/>
-    <path d="M126 91q-4-3-6 0-1 3 1 7l7 9 8 4 5-6-9-6Z"
-        fill="#fffaf3" stroke="#09090b" stroke-width="2.4" stroke-linejoin="round"/>
-  <path d="M187 86q4-2 5 2l-1 9-6 9-6 2-3-4 8-7v-7q0-3 3-4Z"
-        fill="#fffaf3" stroke="#09090b" stroke-width="2.4" stroke-linejoin="round"/>
-  <path d="M147 108l12-5m-7 10 13-5m4-1 9-5" fill="none" stroke="#09090b" stroke-width="1.8" stroke-linecap="round"/>
-    <!-- The bright bow tie is the focal point of the crop -->
-    <path d="M68 36q-3-1-3 2v27q0 3 3 2l21-12V47Zm45-2q3-2 3 2v26q0 3-3 2L99 54V45Z"
-          fill="#f9314e" stroke="#09090b" stroke-width="3" stroke-linejoin="round"/>
-    <path d="m74 43 13 7-12 8m31-16-7 7 8 6" fill="none" stroke="#09090b" stroke-width="2.3" stroke-linecap="round"/>
-    <rect x="87" y="44" width="14" height="14" rx="4" fill="#f9314e" stroke="#09090b" stroke-width="2.8"/>
-    <!-- Camera corners -->
-    <path d="M17 29V17h12m142 0h12v12M17 171v12h12m142 0h12v-12"
-          fill="none" stroke="#fffaf3" stroke-width="3" stroke-linecap="square"/>
+    <rect width="200" height="200" fill="#fffaf0"/>
+    <g transform="translate(-13 -13)">
+      <!-- The circle crops the figure at the collar. -->
+      <path d="M0 216l10-101c3-23 15-36 37-45l15-7 8-29V0h30l1 37 12 27 16 9c14 8 21 22 22 43l6 100Z" fill="#08090a"/>
+      <path d="M60 63l14-19 16 8 16-9 9 18-16 126Z" fill="#fffaf0"/>
+      <path d="m72 47 15 14-14 10-9-13m38-12L90 61l15 8 7-13"
+            fill="none" stroke="#08090a" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M53 69l-9 26 13 2-3 10 43 81m21-118 10 22-10 5 4 8-23 83"
+            fill="none" stroke="#fffaf0" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Signature red bow tie. -->
+      <path d="M63 59q-3-2-3 2v27q0 4 3 2l23-11V70Zm51 0q3-2 3 2v27q0 4-3 2L92 79V70Z" fill="#ed2546"/>
+      <path d="m68 66 14 8-14 7m41-15-14 8 14 7"
+            fill="none" stroke="#08090a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="82" y="68" width="13" height="14" rx="3.6" fill="#ed2546" stroke="#08090a" stroke-width="2.8"/>
+    </g>
+    <!-- Three overlapping terminal windows, fanned like a hand of cards. -->
+    <g fill="#08090a" stroke="#fffaf0" stroke-width="3.4" stroke-linejoin="round">
+      <g transform="rotate(-21 146 122)">
+        <rect x="124" y="56" width="43" height="64" rx="6"/>
+        <path d="M124 66h43" stroke-width="2.6"/>
+        <circle cx="131" cy="61" r="1.6" fill="#fffaf0" stroke="none"/>
+      </g>
+      <g transform="rotate(19 146 122)">
+        <rect x="124" y="56" width="43" height="64" rx="6"/>
+        <path d="M124 66h43" stroke-width="2.6"/>
+        <circle cx="131" cy="61" r="1.6" fill="#fffaf0" stroke="none"/>
+      </g>
+      <rect x="124" y="51" width="46" height="68" rx="6"/>
+      <path d="M124 62h46" stroke-width="2.6"/>
+    </g>
+    <circle cx="131" cy="57" r="1.5" fill="#fffaf0"/>
+    <circle cx="136" cy="57" r="1.5" fill="#fffaf0"/>
+    <path d="m133 76 7 6-7 6m14 0h10" fill="none" stroke="#fffaf0" stroke-width="4"
+          stroke-linecap="square" stroke-linejoin="round"/>
+    <!-- Gloved grip, white cuff, and raised sleeve. -->
+    <path d="M127 143l3-12-7-12q-3-6 2-9 3-2 7 1l7 7 3-8q2-4 6-4 4 0 5 5l1 2 6-1q6-1 8 4 3 2 2 7l-3 12-12 11Z"
+          fill="#08090a" stroke="#fffaf0" stroke-width="2.7" stroke-linejoin="round"/>
+    <path d="m136 117 11 7" fill="none" stroke="#fffaf0" stroke-width="1.9" stroke-linecap="round"/>
+    <path d="m128 135 30 9-6 15-29-10Z" fill="#fffaf0"/>
+    <path d="m124 147 30 11-12 29c-5 10-16 14-29 11l-32-8 8-17 23 2Z" fill="#08090a"/>
+    <path d="m89 174 22 2 13-28m31 11-11 26c-4 9-12 15-22 15"
+          fill="none" stroke="#fffaf0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="138" cy="167" r="2.1" fill="#fffaf0"/>
   </g>
-  <rect x="1.5" y="1.5" width="197" height="197" rx="19" fill="none" stroke="#fffaf3" stroke-width="3"/>
 </svg>
