@@ -66,7 +66,7 @@ class CommandTests(unittest.TestCase):
             result = commands.run(self.conn, job['id'], job['scope_hash'])
         self.assertEqual(result['status'], 'completed')
         self.assertEqual(result['exit_code'], 0)
-        self.assertIn(str(self.workspace), result['output'])
+        self.assertTrue(Path(result['output'].splitlines()[0]).samefile(self.workspace))
         self.assertIn('absent', result['output'])
         self.assertNotIn('must-not-inherit', result['output'])
         with self.assertRaises(ValueError):
