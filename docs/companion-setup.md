@@ -62,6 +62,7 @@ Both receivers filter the exact configured workspace and enabled tool before ope
 | `projects` | Unique project labels, absolute workspaces, enabled `codex`/`claude` tools |
 | `approval` | 1–120 minute TTL; execution must remain `preview_only` |
 | `agent` | Disabled by default; Codex text-only provider; timeout 1–120 seconds; per-task approval still required |
+| `commands` | Disabled by default; named project argv allowlist; timeout 1–300 seconds; separate approval and run. See [command setup](local-commands.md). |
 | `triage` | Local Ollama opt-in, explicit consent, lifetime database call ceiling 1–100 |
 | `notifications` | Opt-in, `browser`/`native`/`dialog`, 30–86400 second cooldown, local quiet hours |
 

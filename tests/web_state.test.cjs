@@ -33,6 +33,7 @@ let script = fs.readFileSync(path.join(__dirname, '../src/proactive_coding_orche
 script = script.replace('refresh();setInterval(refresh,3000);', '');
 vm.runInContext(script, context);
 vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/proactive_coding_orchestrator/web/memory.js'),'utf8'),context);
+vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/proactive_coding_orchestrator/web/commands.js'),'utf8'),context);
 
 (async () => {
   await vm.runInContext('refresh()', context);
@@ -110,4 +111,20 @@ vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/proactive_coding_orc
   await vm.runInContext('refresh()',context);
   assert(!descendants(elements.get('memory-drafts')).some(element=>element.textContent.includes('needs a fresh review')));
   console.log('PASS: applied memory history is not mislabeled as awaiting fresh review');
+  state.commands={enabled:true,allowlist:[{name:'tests',project:'personal'}]};
+  state.command_pending=1;
+  state.command_jobs=[{id:'command-one',status:'pending',expired:false,integrity_valid:true,
+    scope_hash:'command-scope',exit_code:null,audit:[],output:'<script>test output</script>',
+    scope:{project:'personal',name:'tests',argv:['python','-m','unittest'],workspace:'/personal',
+      effect:'Runs project code',timeout_seconds:5,output_limit_bytes:65536,expires_at:'future'}}];
+  await vm.runInContext('refresh()',context);
+  const commandNodes=descendants(elements.get('command-jobs'));
+  assert(commandNodes.some(element=>element.textContent==='<script>test output</script>'));
+  assert.equal(commandNodes.find(element=>element.textContent==='Run approved command').disabled,true);
+  assert.equal(commandNodes.find(element=>element.textContent==='Approve this command').disabled,false);
+  assert.match(elements.get('summary').textContent,/1 command\(s\)/);
+  state.command_jobs[0].status='approved';
+  await vm.runInContext('refresh()',context);
+  assert.equal(descendants(elements.get('command-jobs')).find(element=>element.textContent==='Run approved command').disabled,false);
+  console.log('PASS: command review renders output literally and requires separate approval and run');
 })().catch(error => {console.error(error); process.exitCode = 1;});

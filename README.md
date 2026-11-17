@@ -69,6 +69,9 @@ flowchart TD
     Approved -->|Choose Run preview| Preview["Recheck scope and simulate"]
     Approved -->|Revoke| Audit
     Preview --> Audit
+    Review -->|Choose a configured command| Command["Review command scope and approve separately"]
+    Command -->|Choose Run approved command| Result["Run project tests and record output and exit code"]
+    Result --> Audit
 
     classDef gate fill:#d71941,stroke:#d71941,color:#faf6eb
     class Decision gate
@@ -88,6 +91,12 @@ pco --config pco.json host-config --project personal --tool claude --output clau
 ```
 
 Codex uses completed-turn notifications. Claude Code uses a Stop hook and has a separate, optional read-only native status line. The generators leave host settings untouched. See [companion setup](docs/companion-setup.md) for installation, notifications, the configuration reference and host requirements. [pco.example.json](pco.example.json) contains all settings, including the default crimson accent. Existing configurations retain their chosen accent.
+
+## Approved project commands
+
+Register a personal project's test command, open **Local commands**, and review its exact arguments, working directory and permissions. Approve it, then choose **Run approved command**. Results include captured output, exit status and the approval audit trail. Workflow details can prepare a matching configured command for separate review.
+
+Commands are disabled by default and run as your current OS user. Tests can read or write files and access the network. See [command setup and execution limits](docs/local-commands.md) before opting in.
 
 ## Project memory
 
@@ -114,6 +123,7 @@ Lifecycle hooks can read context at startup and record completion signals at sto
 | Surface | Developer preview status |
 | --- | --- |
 | Local companion | Browser panel with a compact status strip. Open the local URL in the Codex browser panel for in-app use. |
+| Local commands | Opt-in named project commands with separate approval/run, runtime limits, cancellation and results. |
 | Codex | A live Windows completed-turn callback and an approved tool-free text task have been verified. Native Codex status-bar embedding is pending. |
 | Claude Code | Stop receiver and native status-line adapter tested through their command protocols. In-host delivery and display still need live verification. |
 | Notifications | Browser notifications are opt-in. Native Windows display and click-through were user-verified. Native macOS display and click-through still need live verification. |

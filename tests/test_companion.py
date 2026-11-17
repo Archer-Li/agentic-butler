@@ -84,6 +84,35 @@ class CompanionTests(unittest.TestCase):
             self.assertEqual(notice.call_args.args[0],1)
             self.assertTrue(notice.call_args.args[1].startswith(self.server.origin+'/review#notice='))
         self.assertEqual(self.conn.execute('SELECT COUNT(*) FROM proposals').fetchone()[0],0)
+
+    def test_command_http_gate_approval_and_separate_run(self):
+        self.config['commands'] = {'enabled': True, 'allowlist': [{
+            'name': 'tests', 'project': 'personal', 'argv': [sys.executable, '-c', 'print("COMMAND_OK")'],
+            'timeout_seconds': 5}]}
+        self.path.write_text(json.dumps(self.config), encoding='utf-8')
+        self.server.config_path = str(self.path.resolve())
+        prepare = {'action': 'prepare', 'name': 'tests'}
+        self.assertEqual(self.request('POST', '/api/commands', prepare, token=False)[0], 403)
+        self.assertEqual(self.request('POST', '/api/commands', prepare, extra={'Origin': 'https://example.com'})[0], 403)
+        code, job = self.request('POST', '/api/commands', prepare)
+        self.assertEqual(code, 200)
+        payload = {'id': job['id'], 'action': 'run', 'scope_hash': job['scope_hash']}
+        self.assertEqual(self.request('POST', '/api/commands', payload)[0], 400)
+        payload['action'] = 'approve'
+        self.assertEqual(self.request('POST', '/api/commands', payload)[1]['status'], 'approved')
+        state = self.request('GET', '/api/state')[1]
+        self.assertEqual(state['command_pending'], 1)
+        self.assertEqual(state['command_jobs'][0]['status'], 'approved')
+        payload['action'] = 'run'
+        result = self.request('POST', '/api/commands', payload)[1]
+        self.assertEqual(result['status'], 'completed')
+        self.assertEqual(result['exit_code'], 0)
+        self.assertIn('COMMAND_OK', result['output'])
+        self.assertEqual(self.request('POST', '/api/commands', payload)[0], 400)
+        self.config['commands']['enabled'] = False
+        self.path.write_text(json.dumps(self.config), encoding='utf-8')
+        self.assertEqual(self.request('GET', '/api/state')[1]['command_jobs'], [])
+        self.assertEqual(self.request('POST', '/api/commands', prepare)[0], 400)
     def memory_setup(self):
         self.config['memory'].update(enabled=True,projects=['personal'],debounce_seconds=0)
         self.path.write_text(json.dumps(self.config),encoding='utf-8')

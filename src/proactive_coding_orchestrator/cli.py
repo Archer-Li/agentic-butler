@@ -67,6 +67,14 @@ def parser() -> argparse.ArgumentParser:
     ap.add_argument("--project", required=True)
     ap.add_argument("--prompt", required=True)
     sp.add_parser("agent-list", help="list live text tasks")
+    cp = sp.add_parser("command-prepare", help="prepare a configured local command for review")
+    cp.add_argument("--name", required=True)
+    sp.add_parser("command-list", help="list local command tasks")
+    for name in ("show", "approve", "run", "revoke", "cancel"):
+        sub = sp.add_parser("command-" + name)
+        sub.add_argument("id")
+        if name in ("approve", "run"):
+            sub.add_argument("--expect-scope", required=True)
     for name in ("show", "approve", "run", "revoke", "cancel"):
         sub = sp.add_parser("agent-" + name)
         sub.add_argument("id")
@@ -218,6 +226,30 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 result = memory.act(conn, app_config, args.project, args.id, action, getattr(args, 'expect_scope', None))
             print(json.dumps(result, indent=2, ensure_ascii=True))
+            return 0
+        if args.command.startswith("command-"):
+            if not args.config:
+                raise ValueError("local commands require --config")
+            from . import commands
+            action = args.command.removeprefix("command-")
+            if action == "prepare":
+                result = commands.prepare(conn, args.config, args.name)
+            elif action == "list":
+                result = [job for job in commands.tasks(conn) if job['scope']
+                          and job['scope']['config_path'] == str(Path(args.config).resolve())]
+            else:
+                job = commands.inspect(conn, args.id)
+                if not job['scope'] or job['scope']['config_path'] != str(Path(args.config).resolve()):
+                    raise ValueError("command belongs to another configuration")
+                if action == "show":
+                    result = job
+                elif action == "run":
+                    result = commands.run(conn, args.id, args.expect_scope)
+                else:
+                    result = commands.decide(conn, args.id, action, getattr(args, "expect_scope", None))
+            print(json.dumps(result, indent=2, ensure_ascii=True))
+            if action == "run" and result['status'] != "completed":
+                return 1
             return 0
         if args.command.startswith("agent-"):
             if not args.config:

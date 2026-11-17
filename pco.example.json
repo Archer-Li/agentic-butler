@@ -33,5 +33,9 @@
     "max_records": 64,
     "max_observations": 1000,
     "debounce_seconds": 30
+  },
+  "commands": {
+    "enabled": false,
+    "allowlist": []
   }
 }

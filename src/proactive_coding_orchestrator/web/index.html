@@ -7,8 +7,12 @@
 <div id="content">
 <div class="intro"><div><p class="eyebrow">YOUR WORKFLOW COMPANION</p><h1>A little less to keep in your head.</h1><p>Review useful suggestions from your coding tools. You decide what happens next.</p></div><span class="preview-tag">Workflow previews · live text opt-in</span></div>
 <div id="error" role="alert" hidden></div>
-<nav aria-label="Views"><button data-tab="review" class="active">Review queue <span id="count">0</span></button><button data-tab="agent">Live text tasks</button><button data-tab="memory">Experience updates <span id="memory-count">0</span></button><button data-tab="activity">Activity</button><button data-tab="connections">Tools & settings</button></nav>
+<nav aria-label="Views"><button data-tab="review" class="active">Review queue <span id="count">0</span></button><button data-tab="commands">Local commands</button><button data-tab="agent">Live text tasks</button><button data-tab="memory">Experience updates <span id="memory-count">0</span></button><button data-tab="activity">Activity</button><button data-tab="connections">Tools & settings</button></nav>
 <section id="review"><div class="section-title"><h2>Needs your decision</h2><span>No actions run automatically</span></div><p id="notification-result" role="status"></p><div id="queue"></div><article id="detail" hidden></article></section>
+<section id="commands" hidden><h2>Run a project command</h2>
+<p>Choose a configured command, review its arguments and permissions, then approve and run it separately.</p>
+<label>Configured command <select id="command-name"></select></label>
+<button id="command-prepare">Prepare command for review</button><div id="command-jobs"></div></section>
 <section id="agent" hidden><h2>Live Codex text tasks</h2><p id="agent-policy">Disabled by default. Text goes to OpenAI through your existing Codex login. No tools or source files are supplied. Billing is not capped by the output or time limits.</p><label>Personal project <select id="agent-project"></select></label><label>Task text <textarea id="agent-prompt" rows="4" maxlength="8000"></textarea></label><button id="agent-prepare">Prepare for review</button><div id="agent-jobs"></div></section>
 <section id="memory" hidden>
 <h2>Project memory</h2><p>Capture useful findings, review learning drafts, and carry approved experience into future work.</p>
@@ -29,4 +33,4 @@
 <section id="activity" hidden><h2>Workflow history</h2><div id="history"></div></section>
 <section id="connections" hidden><h2>Connected tools</h2><p>Recent events show observation, not a live connection or authenticated identity.</p><div id="adapters"></div><h2>Preferences</h2><pre id="settings"></pre><button id="permission">Enable browser notifications</button><button id="test-native">Test native notification</button><p id="native-result" role="status"></p><p>Notifications only open this review panel. They never approve or execute a workflow. Edit the application JSON file and restart to change preferences.</p></section>
 <footer><span id="health">Checking local worker…</span><span>Companion panel · native Codex status-bar embedding is not installed</span></footer>
-</div></main><script nonce="__NONCE__">window.PCO_TOKEN="__TOKEN__";</script><script src="/app.js"></script><script src="/memory.js"></script></body></html>
+</div></main><script nonce="__NONCE__">window.PCO_TOKEN="__TOKEN__";</script><script src="/app.js"></script><script src="/memory.js"></script><script src="/commands.js"></script></body></html>

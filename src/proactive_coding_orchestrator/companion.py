@@ -16,7 +16,7 @@ from .settings import event_enabled
 ASSETS = Path(__file__).parent / "web"
 
 
-def snapshot(conn, config: dict, memory_config=None) -> dict:
+def snapshot(conn, config: dict, memory_config=None, *, config_path=None) -> dict:
     events = {r["id"]: r for r in conn.execute("SELECT id,repo,source FROM events")}
     rows = [row for row in list_proposals(conn) if event_enabled(config, events[row["event_id"]])]
     proposals = []
@@ -58,7 +58,22 @@ def snapshot(conn, config: dict, memory_config=None) -> dict:
     references = {project['project']: project['bundle'] for project in memories}
     for proposal in proposals:
         proposal['memory_context'] = references.get(proposal['project'])
-    return {"agent_pending": agent_pending, "state": state, "pending": pending, "approved": approved, "failures": failures,
+    from . import commands
+    command_config = memory_config['commands']
+    allowed_commands = {entry['name']: entry['project'] for entry in command_config['allowlist']}
+    command_jobs = [job for job in commands.tasks(conn) if job['scope']
+                    and allowed_commands.get(job['scope']['name']) == job['scope']['project']
+                    and (config_path is None or job['scope']['config_path'] == config_path)] if command_config['enabled'] else []
+    command_pending = sum(job['status'] in ('pending', 'approved') and not job['expired'] for job in command_jobs)
+    if command_pending and state == 'quiet':
+        state = 'review'
+    command_failures = sum(job['status'] == 'failed' for job in command_jobs)
+    command_running = sum(job['status'] == 'running' for job in command_jobs)
+    if command_failures:
+        state = 'attention'
+    return {"commands": command_config, "command_jobs": command_jobs, "command_pending": command_pending,
+        "command_failures": command_failures, "command_running": command_running,
+        "agent_pending": agent_pending, "state": state, "pending": pending, "approved": approved, "failures": failures,
         "memory": memory_config['memory'], "memories": memories, "memory_pending": memory_pending,
         "agent": config['agent'], "agent_jobs": live,
         "proposals": proposals, "adapters": adapters, "appearance": config["appearance"],
@@ -199,7 +214,7 @@ class Handler(BaseHTTPRequestHandler):
             conn = None
             try:
                 conn = connect(self.server.config["database"])
-                result = snapshot(conn, self.server.config, self.server.memory_config())
+                result = snapshot(conn, self.server.config, self.server.memory_config(), config_path=self.server.config_path)
                 from .notifications import link_status
                 result['notification_link'] = link_status(conn, self.server.origin)
                 result["worker_error"] = self.server.worker_error
@@ -213,7 +228,7 @@ class Handler(BaseHTTPRequestHandler):
             page = (ASSETS / "index.html").read_text(encoding="utf-8")
             page = page.replace("__NONCE__", self.server.nonce).replace("__TOKEN__", self.server.token)
             self.send(200, page.encode(), "text/html")
-        elif path in ("/app.js", "/memory.js", "/style.css"):
+        elif path in ("/app.js", "/memory.js", "/commands.js", "/style.css"):
             self.send(200, (ASSETS / path[1:]).read_bytes(), "text/javascript" if path.endswith(".js") else "text/css")
         elif path in ("/brand-icon.png", "/favicon.png"):
             self.send(200, (ASSETS / path[1:]).read_bytes(), "image/png")
@@ -231,6 +246,27 @@ class Handler(BaseHTTPRequestHandler):
             if not 0 < size <= 16384:
                 raise ValueError("invalid request size")
             data = json.loads(self.rfile.read(size))
+            if self.path == '/api/commands':
+                from . import commands
+                if not self.server.config_path:
+                    raise ValueError('local commands require a configuration file')
+                config = self.server.memory_config()
+                conn = connect(config['database'])
+                if isinstance(data, dict) and set(data) == {'action', 'name'} and data['action'] == 'prepare':
+                    result = commands.prepare(conn, self.server.config_path, data['name'])
+                elif (isinstance(data, dict) and set(data) == {'id', 'action', 'scope_hash'}
+                        and isinstance(data['id'], str)):
+                    job = commands.inspect(conn, data['id'])
+                    if not job['scope'] or job['scope']['config_path'] != self.server.config_path:
+                        raise ValueError('command belongs to another configuration')
+                    if data['action'] == 'run':
+                        result = commands.run(conn, data['id'], data['scope_hash'])
+                    else:
+                        result = commands.decide(conn, data['id'], data['action'], data['scope_hash'])
+                else:
+                    raise ValueError('invalid command action fields')
+                self.send(200, result)
+                return
             if self.path == '/api/memory':
                 from . import memory
                 config = self.server.memory_config()

@@ -1,5 +1,16 @@
 # Roadmap
 
+## Current command execution increment
+
+- [x] Named project command allowlist with disabled-by-default configuration migration
+- [x] Exact argument/workspace/executable scope, separate approval and one-shot run
+- [x] CLI and companion review, output/exit code, audit, cancellation and runtime limits
+- [x] Workflow-to-command preparation with a separate approval
+- [ ] Crash reconciliation and stronger process containment, including Windows Job Objects
+- [ ] Broader coding-agent tool execution and file-edit capabilities
+
+Local command execution runs trusted project code with current-user permissions. See [execution boundaries](local-commands.md). The earlier version milestones below retain their original scope.
+
 This is a proposal, not a commitment to implement all features at once.
 
 ## v0.1 — safe control plane (included)

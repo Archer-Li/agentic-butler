@@ -15,6 +15,7 @@ DEFAULTS = {
     "approval": {"ttl_minutes": 60, "execution": "preview_only"},
     "triage": {"enabled": False, "consent": False, "max_calls": 10},
     "agent": {"enabled": False, "provider": "codex", "timeout_seconds": 60},
+    "commands": {"enabled": False, "allowlist": []},
     "memory": {"enabled": False, "projects": [], "bundle_bytes": 4096,
                "max_records": 64, "max_observations": 1000, "debounce_seconds": 30},
     "projects": [],
@@ -37,14 +38,14 @@ def event_enabled(config, event) -> bool:
 def validate(data: object) -> dict:
     if isinstance(data, dict):
         data = deepcopy(data)
-        for optional in ("agent", "memory"):
+        for optional in ("agent", "memory", "commands"):
             if optional not in data:
                 data[optional] = deepcopy(DEFAULTS[optional])
     if not isinstance(data, dict) or set(data) != set(DEFAULTS):
         raise ValueError("configuration must contain exactly the documented version-1 sections")
     if type(data["version"]) is not int or data["version"] != 1:
         raise ValueError("unsupported configuration version")
-    for section in ("appearance", "notifications", "approval", "triage", "agent", "memory"):
+    for section in ("appearance", "notifications", "approval", "triage", "agent", "memory", "commands"):
         if not isinstance(data[section], dict) or set(data[section]) != set(DEFAULTS[section]):
             raise ValueError(f"invalid {section} fields")
     if not isinstance(data["database"], str) or not data["database"].strip():
@@ -96,6 +97,29 @@ def validate(data: object) -> dict:
             raise ValueError("tools must be a unique selection of codex and claude")
         labels.add(name)
         workspaces.add(normalized)
+    commands = data['commands']
+    if type(commands['enabled']) is not bool or not isinstance(commands['allowlist'], list):
+        raise ValueError('commands requires an enabled switch and an allowlist array')
+    if len(commands['allowlist']) > 32:
+        raise ValueError('at most 32 commands may be configured')
+    command_names = set()
+    for entry in commands['allowlist']:
+        if not isinstance(entry, dict) or set(entry) != {'name', 'project', 'argv', 'timeout_seconds'}:
+            raise ValueError('command fields must be name, project, argv, timeout_seconds')
+        name = entry['name']
+        if (not isinstance(name, str) or not re.fullmatch(r'[A-Za-z0-9_.-]{1,80}', name)
+                or name in command_names):
+            raise ValueError('command names must be unique simple labels')
+        if not isinstance(entry['project'], str) or entry['project'] not in labels:
+            raise ValueError('command must refer to a configured project')
+        argv = entry['argv']
+        if (not isinstance(argv, list) or not 1 <= len(argv) <= 64
+                or any(not isinstance(arg, str) or len(arg.encode('utf-8')) > 4096 or '\x00' in arg for arg in argv)
+                or not argv[0].strip()):
+            raise ValueError('command argv must contain bounded strings and an executable')
+        if type(entry['timeout_seconds']) is not int or not 1 <= entry['timeout_seconds'] <= 300:
+            raise ValueError('command timeout must be 1-300 seconds')
+        command_names.add(name)
     memory = data['memory']
     if type(memory['enabled']) is not bool:
         raise ValueError('memory.enabled must be boolean')
