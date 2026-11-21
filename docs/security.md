@@ -54,6 +54,14 @@ Memory requires explicit project opt-in. Lifecycle adapters filter the exact wor
 
 Change scopes bind the project, configuration, revision, before/after snapshots, note selection and expiry. Canonical hashes and transactional promotion reject stale or tampered changes and concurrent double application. Pinned changes require explicit consent. Semantic jobs expose bounded source text for separate task approval; unsupported output and references outside that snapshot fail closed. Applying model output still requires memory approval and application. Existing same-origin/token controls protect memory API actions. Stored checkpoints and historical revisions remain local and are not hard-deleted by retirement; local runtime/database/configuration integrity remains a trust assumption.
 
+## CI evidence and provider disclosure
+
+CI investigations are disabled by default. A user selects a failure log and bounded UTF-8 files within an opted-in workspace. Import stays local. Each separately approved diagnosis or plan displays the exact evidence sent to OpenAI through the existing Codex login. Raw imported logs and file snapshots may contain secrets, so review them before approving disclosure. Model instructions treat logs and source as untrusted reference data, and the adapter grants no tools.
+
+The approval engine rechecks file fingerprints and review generations before approval, dispatch and result import. Running tasks observe changes and request cancellation. Cancellation can discard a stale result after the provider has already received approved input. A result must cite supplied sources and existing line numbers. Citation validation does not establish causal correctness. Model changes remain a displayed plan.
+
+Local verification inherits the command runner's current-user permissions and process-containment limits. Success applies to the selected files and check, with no claim of remote CI success or whole-workspace isolation. See [CI boundaries](ci-investigations.md).
+
 ## Configured local commands
 
 The opt-in local command runner executes configured project code as the current OS user. Its dedicated approval binds arguments, resolved workspace, executable hash, expiry and configuration. Approval and run are separate, and SQLite claims prevent replay. Existing preview and text-task approvals grant no command execution rights. Output is stored locally. Tests may write files or use the network, and project source/dependencies are not frozen by approval. Process termination has platform limitations. See [local command boundaries](local-commands.md#execution-boundary).

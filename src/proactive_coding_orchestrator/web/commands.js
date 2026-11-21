@@ -35,9 +35,10 @@ function renderCommands(state) {
     }, null, 2)));
     body.append(details);
     if (job.output) body.append(el('pre', job.output));
+    if (job.stale) body.append(el('p', 'Selected CI evidence changed. Prepare a fresh verification command.', 'notice'));
     if (job.exit_code !== null) body.append(el('p', 'Exit code: ' + job.exit_code));
     const controls = el('div', undefined, 'actions');
-    const valid = !job.expired && job.integrity_valid;
+    const valid = !job.expired && job.integrity_valid && !job.stale;
     for (const [action, label, allowed] of [
       ['approve', 'Approve this command', job.status === 'pending' && valid],
       ['run', 'Run approved command', job.status === 'approved' && valid],

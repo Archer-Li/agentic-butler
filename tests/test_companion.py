@@ -113,6 +113,31 @@ class CompanionTests(unittest.TestCase):
         self.path.write_text(json.dumps(self.config), encoding='utf-8')
         self.assertEqual(self.request('GET', '/api/state')[1]['command_jobs'], [])
         self.assertEqual(self.request('POST', '/api/commands', prepare)[0], 400)
+
+    def test_ci_http_import_and_dynamic_fix_state(self):
+        self.config['ci']['enabled'] = True
+        source = self.root / 'selected.py'
+        source.write_text('value = 1\n', encoding='utf-8')
+        self.path.write_text(json.dumps(self.config), encoding='utf-8')
+        self.server.config_path = str(self.path.resolve())
+        proposal = self.proposal()
+        payload = {'action': 'open', 'proposal_id': proposal, 'log': 'AssertionError: expected 2',
+                   'files': ['selected.py'], 'command_id': None}
+        self.assertEqual(self.request('POST', '/api/ci', payload, token=False)[0], 403)
+        self.assertEqual(self.request('POST', '/api/ci', payload,
+                         extra={'Origin': 'https://example.com'})[0], 403)
+        code, investigation = self.request('POST', '/api/ci', payload)
+        self.assertEqual(code, 200)
+        self.assertEqual(investigation['state'], 'needs_analysis')
+        self.assertEqual(self.request('GET', '/api/state')[1]['ci_cases'][0]['id'], investigation['id'])
+        source.write_text('value = 2\n', encoding='utf-8')
+        self.assertEqual(self.request('GET', '/api/state')[1]['ci_cases'][0]['state'], 'changed')
+        fixed = {'action': 'fixed', 'id': investigation['id']}
+        self.assertEqual(self.request('POST', '/api/ci', fixed)[1]['state'], 'needs_verification')
+        self.assertEqual(self.request('GET', '/api/state')[1]['pending'], 0)
+        self.config['ci']['enabled'] = False
+        self.path.write_text(json.dumps(self.config), encoding='utf-8')
+        self.assertEqual(self.request('POST', '/api/ci', fixed)[0], 400)
     def memory_setup(self):
         self.config['memory'].update(enabled=True,projects=['personal'],debounce_seconds=0)
         self.path.write_text(json.dumps(self.config),encoding='utf-8')

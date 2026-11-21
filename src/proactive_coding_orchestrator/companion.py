@@ -17,6 +17,10 @@ ASSETS = Path(__file__).parent / "web"
 
 
 def snapshot(conn, config: dict, memory_config=None, *, config_path=None) -> dict:
+    from . import ci
+    observed_config = memory_config or config
+    ci_cases = ci.cases(conn, config_path) if config_path and observed_config['ci']['enabled'] else []
+    collaborations = {case['proposal_id']: case for case in ci_cases}
     events = {r["id"]: r for r in conn.execute("SELECT id,repo,source FROM events")}
     rows = [row for row in list_proposals(conn) if event_enabled(config, events[row["event_id"]])]
     proposals = []
@@ -28,7 +32,13 @@ def snapshot(conn, config: dict, memory_config=None, *, config_path=None) -> dic
             "scope": view["scope"], "scope_hash": row["scope_hash"], "expired": view["expired"],
             "integrity_valid": view["integrity_valid"], "can_execute": view["can_execute"], "audit": view["audit"],
             "output": execution[0] if execution else None})
-    pending = sum(p["status"] == "pending" and not p["expired"] for p in proposals)
+    for proposal in proposals:
+        case = collaborations.get(proposal['id'])
+        if case:
+            proposal['ci_case_id'] = case['id']
+            proposal['collaboration_state'] = case['state']
+            proposal['collaboration_quiet'] = case['state'] in ('needs_verification', 'verifying', 'verified')
+    pending = sum(p["status"] == "pending" and not p["expired"] and not p.get('collaboration_quiet') for p in proposals)
     approved = sum(p["can_execute"] for p in proposals)
     failures = sum(p["status"] in ("failed", "interrupted") for p in proposals)
     adapters = []
@@ -44,7 +54,7 @@ def snapshot(conn, config: dict, memory_config=None, *, config_path=None) -> dic
     from .live_agent import tasks
     allowed = {p['name'] for p in config['projects'] if 'codex' in p['tools']}
     live = [job for job in tasks(conn) if job['scope'] and job['scope']['project'] in allowed] if config['agent']['enabled'] else []
-    agent_pending = sum(j['status'] == 'pending' and not j['expired'] for j in live)
+    agent_pending = sum(j['status'] == 'pending' and not j['expired'] and not j.get('stale') for j in live)
     if agent_pending and state == 'quiet':
         state = 'review'
     from . import memory
@@ -64,14 +74,19 @@ def snapshot(conn, config: dict, memory_config=None, *, config_path=None) -> dic
     command_jobs = [job for job in commands.tasks(conn) if job['scope']
                     and allowed_commands.get(job['scope']['name']) == job['scope']['project']
                     and (config_path is None or job['scope']['config_path'] == config_path)] if command_config['enabled'] else []
-    command_pending = sum(job['status'] in ('pending', 'approved') and not job['expired'] for job in command_jobs)
+    command_pending = sum(job['status'] in ('pending', 'approved') and not job['expired'] and not job.get('stale') for job in command_jobs)
     if command_pending and state == 'quiet':
         state = 'review'
-    command_failures = sum(job['status'] == 'failed' for job in command_jobs)
+    verified_failures = {case['source_command'] for case in ci_cases if case['state'] in ('needs_verification', 'verifying', 'verified')}
+    command_failures = sum(job['status'] == 'failed' and job['id'] not in verified_failures for job in command_jobs)
     command_running = sum(job['status'] == 'running' for job in command_jobs)
     if command_failures:
         state = 'attention'
-    return {"commands": command_config, "command_jobs": command_jobs, "command_pending": command_pending,
+    ci_attention = sum(case['state'] not in ('verified', 'verifying') for case in ci_cases)
+    if ci_attention and state == 'quiet':
+        state = 'review'
+    return {"ci": memory_config['ci'], "ci_cases": ci_cases, "ci_attention": ci_attention,
+        "commands": command_config, "command_jobs": command_jobs, "command_pending": command_pending,
         "command_failures": command_failures, "command_running": command_running,
         "agent_pending": agent_pending, "state": state, "pending": pending, "approved": approved, "failures": failures,
         "memory": memory_config['memory'], "memories": memories, "memory_pending": memory_pending,
@@ -228,7 +243,7 @@ class Handler(BaseHTTPRequestHandler):
             page = (ASSETS / "index.html").read_text(encoding="utf-8")
             page = page.replace("__NONCE__", self.server.nonce).replace("__TOKEN__", self.server.token)
             self.send(200, page.encode(), "text/html")
-        elif path in ("/app.js", "/memory.js", "/commands.js", "/style.css"):
+        elif path in ("/app.js", "/memory.js", "/commands.js", "/ci.js", "/style.css"):
             self.send(200, (ASSETS / path[1:]).read_bytes(), "text/javascript" if path.endswith(".js") else "text/css")
         elif path in ("/brand-icon.png", "/favicon.png"):
             self.send(200, (ASSETS / path[1:]).read_bytes(), "image/png")
@@ -246,6 +261,28 @@ class Handler(BaseHTTPRequestHandler):
             if not 0 < size <= 16384:
                 raise ValueError("invalid request size")
             data = json.loads(self.rfile.read(size))
+            if self.path == '/api/ci':
+                from . import ci
+                if not self.server.config_path or not isinstance(data, dict):
+                    raise ValueError('CI actions require a configuration and JSON object')
+                config = self.server.memory_config()
+                conn = connect(config['database'])
+                action = data.get('action')
+                if action == 'open' and set(data) == {'action', 'proposal_id', 'log', 'files', 'command_id'}:
+                    result = ci.open_case(conn, self.server.config_path, data['proposal_id'],
+                        data['log'], data['files'], command_id=data['command_id'])
+                elif action in ('diagnose', 'plan') and set(data) == {'action', 'id'}:
+                    result = ci.prepare(conn, self.server.config_path, data['id'], action)
+                elif action == 'import' and set(data) == {'action', 'id', 'agent_id'}:
+                    result = ci.import_result(conn, self.server.config_path, data['id'], data['agent_id'])
+                elif action in ('fixed', 'resume') and set(data) == {'action', 'id'}:
+                    result = ci.report_fix(conn, self.server.config_path, data['id'], action == 'fixed')
+                elif action == 'verify' and set(data) == {'action', 'id', 'name'}:
+                    result = ci.prepare_verification(conn, self.server.config_path, data['id'], data['name'])
+                else:
+                    raise ValueError('invalid CI action fields')
+                self.send(200, result)
+                return
             if self.path == '/api/commands':
                 from . import commands
                 if not self.server.config_path:

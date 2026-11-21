@@ -34,6 +34,7 @@ script = script.replace('refresh();setInterval(refresh,3000);', '');
 vm.runInContext(script, context);
 vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/proactive_coding_orchestrator/web/memory.js'),'utf8'),context);
 vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/proactive_coding_orchestrator/web/commands.js'),'utf8'),context);
+vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/proactive_coding_orchestrator/web/ci.js'),'utf8'),context);
 
 (async () => {
   await vm.runInContext('refresh()', context);
@@ -127,4 +128,23 @@ vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/proactive_coding_orc
   await vm.runInContext('refresh()',context);
   assert.equal(descendants(elements.get('command-jobs')).find(element=>element.textContent==='Run approved command').disabled,false);
   console.log('PASS: command review renders output literally and requires separate approval and run');
+  state.ci={enabled:true};
+  state.ci_cases=[{id:'case-one',project:'personal',state:'changed',stale:true,files:[],audit:[],
+    material:{log:'<script>untrusted log</script>',files:[{path:'selected.py',text:'value = 2'}]},
+    diagnosis:{summary:'Earlier diagnosis'},plan:null,evidence_error:false,user_fixed:0}];
+  await vm.runInContext('refresh()',context);
+  assert(descendants(elements.get('ci-cases')).some(element=>element.textContent==='<script>untrusted log</script>'));
+  assert(descendants(elements.get('ci-cases')).some(element=>element.textContent.includes('Earlier analysis describes older evidence')));
+  state.ci_cases[0].state='needs_verification';
+  state.ci_cases[0].user_fixed=1;
+  await vm.runInContext('refresh()',context);
+  let ciNodes=descendants(elements.get('ci-cases'));
+  assert(ciNodes.some(element=>element.textContent==='Earlier evidence and recommendations' && !element.open));
+  assert(!ciNodes.some(element=>element.textContent==='Prepare diagnosis for review'));
+  state.ci_cases[0].state='verified';
+  await vm.runInContext('refresh()',context);
+  ciNodes=descendants(elements.get('ci-cases'));
+  assert(!ciNodes.some(element=>element.textContent.startsWith('Review verification:')));
+  assert(ciNodes.some(element=>element.textContent.includes('Selected verification passed')));
+  console.log('PASS: CI evidence renders literally and completed work reduces to a compact result');
 })().catch(error => {console.error(error); process.exitCode = 1;});

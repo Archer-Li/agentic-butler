@@ -4,7 +4,7 @@
 
 Agentic Butler is a local companion for **Codex and Claude Code**. It brings workflow suggestions into one review queue and keeps useful lessons with the project, so a new session can pick up where the last one left off.
 
-**Developer preview · v0.3.dev1** · Python 3.10+ · [MIT License](LICENSE)
+**Alpha preview · v0.3.0a1** · Python 3.10+ · [MIT License](LICENSE)
 
 ## Quick start
 
@@ -92,6 +92,12 @@ pco --config pco.json host-config --project personal --tool claude --output clau
 
 Codex uses completed-turn notifications. Claude Code uses a Stop hook and has a separate, optional read-only native status line. The generators leave host settings untouched. See [companion setup](docs/companion-setup.md) for installation, notifications, the configuration reference and host requirements. [pco.example.json](pco.example.json) contains all settings, including the default crimson accent. Existing configurations retain their chosen accent.
 
+## CI failure diagnosis
+
+An opt-in investigation connects a CI failure signal to selected logs and source files, a separately approved read-only diagnosis, and a separately approved modification plan. Recommendations react to edits in the selected files. Report a fix to reduce the suggestion to verification, then run a separately approved project check to close it.
+
+Evidence import stays local. Model tasks disclose the exact log and file snapshots sent to OpenAI. This version uses imported CI logs or failed local command output. [Setup, workflow and observation limits](docs/ci-investigations.md).
+
 ## Approved project commands
 
 Register a personal project's test command, open **Local commands**, and review its exact arguments, working directory and permissions. Approve it, then choose **Run approved command**. Results include captured output, exit status and the approval audit trail. Workflow details can prepare a matching configured command for separate review.
@@ -124,6 +130,7 @@ Lifecycle hooks can read context at startup and record completion signals at sto
 | --- | --- |
 | Local companion | Browser panel with a compact status strip. Open the local URL in the Codex browser panel for in-app use. |
 | Local commands | Opt-in named project commands with separate approval/run, runtime limits, cancellation and results. |
+| CI investigations | Imported failure evidence, approved diagnosis and modification plan, selected-file change detection and scoped verification. |
 | Codex | A live Windows completed-turn callback and an approved tool-free text task have been verified. Native Codex status-bar embedding is pending. |
 | Claude Code | Stop receiver and native status-line adapter tested through their command protocols. In-host delivery and display still need live verification. |
 | Notifications | Browser notifications are opt-in. Native Windows display and click-through were user-verified. Native macOS display and click-through still need live verification. |

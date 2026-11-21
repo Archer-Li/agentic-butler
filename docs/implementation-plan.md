@@ -1,5 +1,22 @@
 # Implementation plan — 2026-10-27
 
+## Current priorities — 2026-11-16
+
+P0 is an evidence-based CI failure investigation that adapts to work already in progress.
+
+1. Import an explicitly selected failed CI signal, bounded failure log and selected project files into a local evidence snapshot. Display exactly what a model would receive.
+2. Prepare a read-only diagnosis task under the existing per-task approval and run controls. Return causes, cited evidence, uncertainty and validation steps.
+3. Let the user approve a separate task that produces a reviewable, file-specific modification plan from the diagnosis.
+4. Recheck selected files on observation, review and execution. Mark old recommendations stale when the user or another agent changes them. Changed evidence requires a new task and approval.
+5. Support an explicit “I have made the fix” signal that reduces the recommendation to verification. A passing, separately approved verification command bound to the current selected files closes the investigation and collapses its details. Edits alone never establish that the issue is fixed.
+6. Exercise a complete synthetic failure, diagnosis, human edit and successful verification. Preserve auditable evidence and describe the scope of verification.
+
+The initial implementation uses imported CI logs or a failed local command's output. Automatic GitHub log collection, richer agent activity coordination and whole-repository change detection are follow-ups. Only selected files are observed. Polling cannot infer a person's intent or prove that a change is a complete fix.
+
+P1 follows this workflow with a 30–50-task pilot evaluation dataset. Capture memory snapshots available before each task and label relevant evidence. Compare no memory, the current keyword method, BM25 and hybrid BM25/embeddings under equal model/context budgets. Measure Recall@K, irrelevant and stale context, tokens, retrieval latency and independently judged task outcomes. Separate tuning tasks from held-out evaluation. Dataset collection uses independently authored personal material and records provenance. No semantic retrieval improvement is claimed before evaluation.
+
+Acceptance for dynamic collaboration includes changing a selected file midway through diagnosis, refusing stale approvals, preparing an updated task from current evidence, reducing a user-reported fix to verification, and collapsing the suggestion after a matching check passes. Observing state never dispatches a model or command.
+
 Goal: turn the existing approval engine into an inspectable, local companion for Codex and Claude Code. Keep all executions preview-only until a real executor has an explicitly approved authorization policy.
 
 1. Add a strict, versioned application configuration with safe defaults, tool/project allowlists, colors, notification preferences, TTL and local-model budget. Provide init/validate commands and an example.

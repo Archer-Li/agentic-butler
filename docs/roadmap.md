@@ -1,5 +1,17 @@
 # Roadmap
 
+## Current P0 and P1 priorities
+
+- [x] Selected CI failure evidence, separately approved diagnosis and file-specific modification plan
+- [x] Selected-file observation with stale task rejection and active task cancellation
+- [x] Explicit fix report, reduced verification flow and compact success state
+- [ ] Automatic GitHub run/job log collection and authenticated remote verification
+- [ ] Whole-workspace change identity and richer human/agent activity coordination
+- [ ] P1 pilot dataset of 30–50 independently authored tasks with pre-task memory snapshots
+- [ ] Compare no memory, keyword retrieval, BM25 and hybrid retrieval with held-out evaluation
+
+See the [current development plan](implementation-plan.md#current-priorities--2026-11-16) and [CI investigation limits](ci-investigations.md).
+
 ## Current command execution increment
 
 - [x] Named project command allowlist with disabled-by-default configuration migration

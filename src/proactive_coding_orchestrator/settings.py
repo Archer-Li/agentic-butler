@@ -16,6 +16,7 @@ DEFAULTS = {
     "triage": {"enabled": False, "consent": False, "max_calls": 10},
     "agent": {"enabled": False, "provider": "codex", "timeout_seconds": 60},
     "commands": {"enabled": False, "allowlist": []},
+    "ci": {"enabled": False},
     "memory": {"enabled": False, "projects": [], "bundle_bytes": 4096,
                "max_records": 64, "max_observations": 1000, "debounce_seconds": 30},
     "projects": [],
@@ -38,14 +39,14 @@ def event_enabled(config, event) -> bool:
 def validate(data: object) -> dict:
     if isinstance(data, dict):
         data = deepcopy(data)
-        for optional in ("agent", "memory", "commands"):
+        for optional in ("agent", "memory", "commands", "ci"):
             if optional not in data:
                 data[optional] = deepcopy(DEFAULTS[optional])
     if not isinstance(data, dict) or set(data) != set(DEFAULTS):
         raise ValueError("configuration must contain exactly the documented version-1 sections")
     if type(data["version"]) is not int or data["version"] != 1:
         raise ValueError("unsupported configuration version")
-    for section in ("appearance", "notifications", "approval", "triage", "agent", "memory", "commands"):
+    for section in ("appearance", "notifications", "approval", "triage", "agent", "memory", "commands", "ci"):
         if not isinstance(data[section], dict) or set(data[section]) != set(DEFAULTS[section]):
             raise ValueError(f"invalid {section} fields")
     if not isinstance(data["database"], str) or not data["database"].strip():
@@ -98,6 +99,8 @@ def validate(data: object) -> dict:
         labels.add(name)
         workspaces.add(normalized)
     commands = data['commands']
+    if type(data['ci']['enabled']) is not bool:
+        raise ValueError('ci.enabled must be boolean')
     if type(commands['enabled']) is not bool or not isinstance(commands['allowlist'], list):
         raise ValueError('commands requires an enabled switch and an allowlist array')
     if len(commands['allowlist']) > 32:

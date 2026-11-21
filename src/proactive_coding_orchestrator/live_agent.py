@@ -47,7 +47,7 @@ def binary_hash(path):
     return value.hexdigest()
 
 
-def prepare(conn, config_path, project, prompt, *, memory_draft_input=None):
+def prepare(conn, config_path, project, prompt, *, memory_draft_input=None, ci_input=None):
     config = load(config_path)
     if not config['agent']['enabled']:
         raise ValueError('live text-agent tasks are disabled in configuration')
@@ -68,7 +68,13 @@ def prepare(conn, config_path, project, prompt, *, memory_draft_input=None):
         'config_path': str(Path(config_path).resolve()), 'config_hash': digest(config),
         'executable': str(Path(cli).resolve()), 'executable_hash': binary_hash(cli)}
     from . import memory
-    if memory_draft_input is not None:
+    if ci_input is not None:
+        from . import ci
+        ci.input_valid(conn, config, ci_input)
+        scope['ci_input'] = ci_input
+        scope['data_disclosure'] = ('The selected failure log and project file snapshots shown in this task '
+            'are sent to OpenAI using the existing Codex login. No tools are available.')
+    elif memory_draft_input is not None:
         scope['memory_draft_input'] = memory_draft_input
     elif memory.opted_in(config, project):
         scope['memory_context'] = memory.read(conn, config, project, query=prompt)
@@ -95,6 +101,13 @@ def inspect(conn, key):
     except (ValueError, TypeError, KeyError):
         scope, valid, expired = None, False, True
     result.update(scope=scope, integrity_valid=valid, expired=expired)
+    result['stale'] = False
+    if scope and scope.get('ci_input'):
+        from . import ci
+        try:
+            ci.input_valid(conn, load(scope['config_path']), scope['ci_input'])
+        except (ValueError, OSError):
+            result['stale'] = True
     result['audit'] = [dict(r) for r in conn.execute(
         'SELECT status,at FROM agent_audit WHERE job_id=? ORDER BY seq', (key,))]
     return result
@@ -115,6 +128,17 @@ def check_policy(scope, *, executable=False, conn=None):
         raise ValueError('unsupported live task capability')
     if executable and binary_hash(scope['executable']) != scope['executable_hash']:
         raise ValueError('Codex executable changed; create a new task')
+    if scope.get('ci_input'):
+        from . import ci
+        from .core import connect
+        owned = conn is None
+        if owned:
+            conn = connect(config['database'])
+        try:
+            ci.input_valid(conn, config, scope['ci_input'])
+        finally:
+            if owned:
+                conn.close()
     if scope.get('memory_context'):
         from . import memory
         from .core import connect
@@ -281,7 +305,10 @@ def run(conn, key):
         except Exception:
             return True
     try:
-        status, output = invoke(scope, cancelled)
+        if cancelled():
+            status, output = 'cancelled', ''
+        else:
+            status, output = invoke(scope, cancelled)
     except Exception:
         status, output = 'failed', 'Agent invocation failed. No raw error or credentials were retained.'
     if cancelled():

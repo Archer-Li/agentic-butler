@@ -70,6 +70,18 @@ def parser() -> argparse.ArgumentParser:
     cp = sp.add_parser("command-prepare", help="prepare a configured local command for review")
     cp.add_argument("--name", required=True)
     sp.add_parser("command-list", help="list local command tasks")
+    co = sp.add_parser("ci-open", help="import selected CI evidence locally for review")
+    co.add_argument("--proposal", required=True)
+    co.add_argument("--file", action="append", required=True)
+    co.add_argument("--command-id", help="use a failed local command's output instead of stdin")
+    sp.add_parser("ci-list", help="list CI investigations in the current configuration")
+    for name in ("show", "diagnose", "plan", "import", "fixed", "resume", "verify"):
+        ci_command = sp.add_parser("ci-" + name)
+        ci_command.add_argument("id")
+        if name == "import":
+            ci_command.add_argument("--agent-id", required=True)
+        if name == "verify":
+            ci_command.add_argument("--name", required=True)
     for name in ("show", "approve", "run", "revoke", "cancel"):
         sub = sp.add_parser("command-" + name)
         sub.add_argument("id")
@@ -225,6 +237,31 @@ def main(argv: list[str] | None = None) -> int:
                 result = memory.dismiss(conn, app_config, args.project, args.id)
             else:
                 result = memory.act(conn, app_config, args.project, args.id, action, getattr(args, 'expect_scope', None))
+            print(json.dumps(result, indent=2, ensure_ascii=True))
+            return 0
+        if args.command.startswith("ci-"):
+            if not args.config:
+                raise ValueError("CI investigations require --config")
+            from . import ci
+            action = args.command.removeprefix("ci-")
+            if action == "open":
+                log = None
+                if not args.command_id:
+                    raw = sys.stdin.buffer.read(4001)
+                    log = raw.decode("utf-8")
+                result = ci.open_case(conn, args.config, args.proposal, log, args.file, command_id=args.command_id)
+            elif action == "list":
+                result = ci.cases(conn, args.config)
+            elif action == "show":
+                result = ci.inspect(conn, args.config, args.id)
+            elif action in ("diagnose", "plan"):
+                result = ci.prepare(conn, args.config, args.id, action)
+            elif action == "import":
+                result = ci.import_result(conn, args.config, args.id, args.agent_id)
+            elif action in ("fixed", "resume"):
+                result = ci.report_fix(conn, args.config, args.id, action == "fixed")
+            else:
+                result = ci.prepare_verification(conn, args.config, args.id, args.name)
             print(json.dumps(result, indent=2, ensure_ascii=True))
             return 0
         if args.command.startswith("command-"):

@@ -51,6 +51,14 @@ Project UUIDs bind local memory to one normalized workspace. Structured checkpoi
 
 Startup hooks and workflow review retrieve a bounded reference bundle. Live text tasks freeze that bundle into their approval scope and recheck referenced guidance before and during execution. Optional semantic consolidation is an ordinary separately approved tool-free text task with frozen source records and note identities. Import validates its output and produces another pending memory review. Neither callbacks nor the worker execute agents or promote memory. See [memory setup](memory-setup.md).
 
+## CI investigations and collaboration
+
+The ci module keeps evidence snapshots and result provenance in ci_cases with a ci_audit history. A case refers to an enabled CI failure proposal, an imported failure log and explicitly selected files. Diagnosis and modification-plan tasks reuse agent_jobs and its approval engine. Their ci_input context binds the case, current evidence fingerprint, review generation and, for plans, the diagnosis digest. Model prompts contain selected snapshots with no tool access. Result import validates stage schemas and supplied-source line references.
+
+State reads recompute selected evidence and derive changed, diagnosed, plan-ready, verification-needed and verified states. Fix reports advance the review generation, permanently invalidating earlier analysis approvals across resume. Verification uses command_jobs with its own ci_input and independent approval. A matching successful check reduces the investigation to a compact result. Original repair reminders are suppressed during verification and after success, while history is retained. No observation schedules a model or command.
+
+See [CI setup, acceptance and observation boundaries](ci-investigations.md).
+
 ## Configured command execution
 
 The commands module stores command_jobs and command_audit separately from previews and Codex text tasks. Configuration provides named argv arrays bound to existing personal project labels. CLI and the authenticated companion endpoint share prepare, inspect, decide and run functions. A transaction claims an approved scope exactly once before spawning a direct executable. Runtime checks observe cancellation and configuration changes, with bounded combined output and wall-clock duration. Command results remain attributable to their task and approval record. See [local command setup and boundaries](local-commands.md).

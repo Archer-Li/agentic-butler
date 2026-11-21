@@ -57,7 +57,7 @@ def definition(config, name):
     return entry, str(workspace), executable
 
 
-def prepare(conn, config_path, name):
+def prepare(conn, config_path, name, *, ci_input=None):
     config = load(config_path)
     entry, workspace, executable = definition(config, name)
     key = str(uuid4())
@@ -67,6 +67,10 @@ def prepare(conn, config_path, name):
              'timeout_seconds': entry['timeout_seconds'], 'output_limit_bytes': OUTPUT_LIMIT,
              'config_path': str(Path(config_path).resolve()), 'config_hash': digest(config),
              'expires_at': timestamp(utc_now() + timedelta(minutes=config['approval']['ttl_minutes']))}
+    if ci_input is not None:
+        from . import ci
+        ci.input_valid(conn, config, ci_input)
+        scope['ci_input'] = ci_input
     initialize(conn)
     with conn:
         conn.execute('INSERT INTO command_jobs(id,scope,scope_hash,status,created_at) VALUES (?,?,?,?,?)',
@@ -88,6 +92,13 @@ def inspect(conn, key):
     except (ValueError, TypeError, KeyError):
         scope, valid, expired = None, False, True
     result.update(scope=scope, integrity_valid=valid, expired=expired)
+    result['stale'] = False
+    if scope and scope.get('ci_input'):
+        from . import ci
+        try:
+            ci.input_valid(conn, load(scope['config_path']), scope['ci_input'])
+        except (ValueError, OSError):
+            result['stale'] = True
     result['audit'] = [dict(r) for r in conn.execute(
         'SELECT status,at FROM command_audit WHERE job_id=? ORDER BY seq', (key,))]
     return result
@@ -99,7 +110,7 @@ def tasks(conn):
     return [inspect(conn, key) for key in keys]
 
 
-def check_policy(scope, *, executable=False):
+def check_policy(scope, *, executable=False, conn=None):
     config = load(scope['config_path'])
     if digest(config) != scope['config_hash']:
         raise ValueError('configuration changed; prepare and review a new command')
@@ -109,6 +120,17 @@ def check_policy(scope, *, executable=False):
         raise ValueError('command scope changed; prepare and review a new command')
     if executable and binary_hash(binary) != scope['executable_hash']:
         raise ValueError('executable changed; prepare and review a new command')
+    if scope.get('ci_input'):
+        from . import ci
+        from .core import connect
+        owned = conn is None
+        if owned:
+            conn = connect(config['database'])
+        try:
+            ci.input_valid(conn, config, scope['ci_input'])
+        finally:
+            if owned:
+                conn.close()
 
 
 def decide(conn, key, action, expected_scope=None):
@@ -123,7 +145,7 @@ def decide(conn, key, action, expected_scope=None):
             scope = json.loads(row['scope'])
             if status != 'pending' or digest(scope) != row['scope_hash'] or expected_scope != row['scope_hash']:
                 raise ValueError('command is not pending or reviewed scope does not match')
-            check_policy(scope, executable=True)
+            check_policy(scope, executable=True, conn=conn)
             status = 'expired' if datetime.fromisoformat(scope['expires_at']) <= utc_now() else 'approved'
             conn.execute('UPDATE command_jobs SET status=?,approved_hash=? WHERE id=?',
                          (status, row['scope_hash'] if status == 'approved' else None, key))
@@ -217,7 +239,7 @@ def run(conn, key, expected_scope):
             raise ValueError('approved command scope does not match')
         if datetime.fromisoformat(scope['expires_at']) <= utc_now():
             raise ValueError('command approval expired')
-        check_policy(scope, executable=True)
+        check_policy(scope, executable=True, conn=conn)
         conn.execute("UPDATE command_jobs SET status='running' WHERE id=?", (key,))
         audit(conn, key, 'running')
         conn.commit()
@@ -229,7 +251,7 @@ def run(conn, key, expected_scope):
         if conn.execute('SELECT cancel_requested FROM command_jobs WHERE id=?', (key,)).fetchone()[0]:
             return True
         try:
-            check_policy(scope)
+            check_policy(scope, conn=conn)
             return False
         except (ValueError, OSError):
             return True

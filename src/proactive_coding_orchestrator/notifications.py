@@ -151,6 +151,8 @@ def deliver_batch(conn, config: dict, url: str, *, browser=False, backend=None) 
         return {"count": 0, "status": "quiet_hours"}
     if browser != (notices["backend"] == "browser"):
         raise ValueError("notification backend mismatch")
+    from .ci import quiet_proposals
+    quiet_ids = quiet_proposals(conn, config)
     conn.execute("BEGIN IMMEDIATE")
     try:
         last = conn.execute("SELECT MAX(at) FROM notifications").fetchone()[0]
@@ -162,7 +164,7 @@ def deliver_batch(conn, config: dict, url: str, *, browser=False, backend=None) 
         rows = conn.execute("""SELECT p.id,e.repo,e.source FROM proposals p JOIN events e ON e.id=p.event_id
             WHERE p.status='pending' AND p.expires_at>? AND p.id NOT IN (SELECT proposal_id FROM notifications)""",
                             (timestamp(),)).fetchall()
-        ids = [r[0] for r in rows if event_enabled(config, r)]
+        ids = [r[0] for r in rows if event_enabled(config, r) and r[0] not in quiet_ids]
         conn.executemany("INSERT INTO notifications VALUES (?, ?, 'claimed')", [(key, timestamp()) for key in ids])
         conn.commit()
     except BaseException:
