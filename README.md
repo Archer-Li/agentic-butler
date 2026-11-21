@@ -6,7 +6,7 @@ Agentic Butler is a local companion for **Codex and Claude Code**. It brings wor
 
 **Alpha preview · v0.3.0a1** · Python 3.10+ · [MIT License](LICENSE)
 
-[Project overview and five-slide walkthrough](docs/project-overview.md)
+[Explore the interactive walkthrough](https://archer-li.github.io/agentic-butler/) · [Markdown overview](docs/project-overview.md)
 
 ## Quick start
 

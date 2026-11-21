@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Agentic Butler is an approval-first local companion for coding workflows and project memory.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>Agentic Butler — Project memory. Human approval.</title>
+  <link rel="icon" href="assets/agentic-butler-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="site.css">
+  <script src="site.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="shell masthead">
+    <a class="brand" href="./"><img src="assets/agentic-butler-icon.svg" width="35" height="35" alt="">Agentic Butler</a>
+    <nav aria-label="Site">
+      <a href="#walkthrough">Walkthrough</a>
+      <a href="https://github.com/Archer-Li/agentic-butler">GitHub</a>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="shell hero" aria-labelledby="hero-title">
+      <div>
+        <p class="eyebrow"><span class="red-dot"></span> OPEN SOURCE <span aria-hidden="true">/</span> ALPHA</p>
+        <h1 id="hero-title">Keep work moving.<br><span>Stay in control.</span></h1>
+        <p class="intro">A local companion for coding workflows. Investigate CI failures, decide what runs, and carry useful lessons into your next session.</p>
+        <div class="action-row">
+          <a class="button primary" href="#walkthrough">Explore the walkthrough</a>
+          <a class="button secondary" href="https://github.com/Archer-Li/agentic-butler/releases/tag/v0.3.0a1">Get the Alpha</a>
+        </div>
+        <p class="compatibility">Codex &amp; Claude Code workflows <span aria-hidden="true">·</span> Python 3.10+</p>
+      </div>
+      <figure class="hero-art">
+        <div class="emblem-field"><img src="assets/agentic-butler-icon.svg" width="240" height="240" alt="A tuxedoed butler with a red bow tie holding terminal windows"></div>
+        <figcaption>
+          <span class="terminal-icon" aria-hidden="true">&gt;_</span>
+          <span><strong>Project memory.</strong> Human approval.</span>
+        </figcaption>
+      </figure>
+    </section>
+    <div class="paper">
+      <section class="shell walkthrough" id="walkthrough" aria-labelledby="deck-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">THE WORKFLOW</p><h2 id="deck-title">See Butler in action</h2></div>
+          <p>Follow one CI failure from the first signal to a verified fix.</p>
+        </div>
+        <div class="deck" id="deck">
+          <div class="tabs" aria-label="Walkthrough slides" hidden>
+            <button type="button" id="tab-overview" data-slide="overview">Overview</button>
+            <button type="button" id="tab-ci" data-slide="ci">CI diagnosis</button>
+            <button type="button" id="tab-progress" data-slide="progress">As work changes</button>
+            <button type="button" id="tab-memory" data-slide="memory">Project memory</button>
+            <button type="button" id="tab-start" data-slide="start">Try it</button>
+          </div>
+          <div class="stage">
+            <section class="slide" id="slide-overview" aria-labelledby="title-overview">
+              <div class="slide-copy"><h3 id="title-overview">One place to see what needs you.</h3><p>Butler brings signals, suggested actions, and memory drafts into a local companion. Review the evidence and choose which action to approve.</p></div>
+              <div class="demo">
+                <div class="demo-header"><span>Review queue</span><span class="demo-tag">Example</span></div>
+                <dl class="queue"><div><dt>CI investigation</dt><dd><i class="dot warn"></i> Evidence ready</dd></div><div><dt>Project test</dt><dd><i class="dot red-dot"></i> Approval required</dd></div><div><dt>Project memory</dt><dd><i class="dot idle"></i> Lesson proposed</dd></div></dl>
+              </div>
+            </section>
+            <section class="slide" id="slide-ci" aria-labelledby="title-ci">
+              <div class="slide-copy"><h3 id="title-ci">From a failure log to a reviewable plan.</h3><p>Import a log or use failed local command output. Select relevant files, inspect the exact evidence, then approve and run a Codex diagnosis. A file-specific plan takes a separate approval.</p></div>
+              <ol class="flow" aria-label="CI investigation flow"><li><span>Evidence</span><strong>Select failure log and files</strong></li><li class="gate"><span>Approval</span><strong>Review and run diagnosis</strong></li><li><span>Findings</span><strong>Read causes and cited lines</strong></li><li class="gate"><span>Approval</span><strong>Generate a separate plan</strong></li></ol>
+            </section>
+            <section class="slide" id="slide-progress" aria-labelledby="title-progress">
+              <div class="slide-copy"><h3 id="title-progress">Already fixing it? Butler adjusts.</h3><p>Butler watches the files you selected. A change marks prior advice stale. Once you report a fix, the focus shifts to verification.</p></div>
+              <div class="demo">
+                <div class="demo-header"><span>Investigation status</span><span class="demo-tag">Example</span></div>
+                <div class="progress-demo">
+                  <details open><summary><i class="dot warn"></i> A selected file changes</summary><p>Review a fresh task with the current evidence.</p></details>
+                  <details><summary><i class="dot red-dot"></i> You report the fix</summary><p>The old advice folds away. Review and run the verification command separately.</p></details>
+                  <details><summary><i class="dot pass"></i> The approved check passes</summary><p>Butler displays a compact result for the checked snapshot.</p></details>
+                </div>
+              </div>
+            </section>
+            <section class="slide" id="slide-memory" aria-labelledby="title-memory">
+              <div class="slide-copy"><h3 id="title-memory">Keep what the next session can use.</h3><p>Record a finding and its evidence. Review the memory draft before applying it as a versioned lesson. A later coding session can retrieve relevant guidance.</p></div>
+              <ol class="cycle" aria-label="Project memory lifecycle"><li><strong>Capture</strong><span>Finding + evidence</span></li><li><strong>Review</strong><span>Inspect the draft</span></li><li><strong>Apply</strong><span>Save a revision</span></li><li><strong>Reuse</strong><span>Inform a later session</span></li></ol>
+            </section>
+            <section class="slide" id="slide-start" aria-labelledby="title-start">
+              <div class="slide-copy"><h3 id="title-start">Start with one project and one check.</h3><p>Install the Alpha wheel, configure a trusted workspace, then opt in to CI investigations and a local verification command.</p><a class="guide" href="https://github.com/Archer-Li/agentic-butler/blob/v0.3.0a1/docs/companion-setup.md">Read the setup guide</a></div>
+              <div class="demo">
+                <div class="demo-header"><span>Local setup</span><span class="terminal-icon" aria-hidden="true">&gt;_</span></div>
+                <pre><code>pco config-init pco.json
+pco config-check pco.json
+pco --config pco.json ui --open</code></pre>
+              </div>
+            </section>
+          </div>
+          <div class="controls" hidden>
+            <button type="button" id="previous-slide">Previous</button>
+            <span id="slide-counter" aria-live="polite"></span>
+            <button type="button" id="next-slide">Next</button>
+          </div>
+        </div>
+        <div class="alpha-note"><p><strong>In this Alpha</strong> Import CI logs manually or from captured local output. Butler observes selected files, and a passing local check verifies that snapshot.</p><a href="https://github.com/Archer-Li/agentic-butler/blob/v0.3.0a1/docs/ci-investigations.md">CI guide</a></div>
+      </section>
+    </div>
+  </main>
+  <footer class="shell footer"><span>Agentic Butler <span aria-hidden="true">·</span> MIT License</span><a href="https://github.com/Archer-Li/agentic-butler/blob/main/docs/project-overview.md">Markdown guide</a></footer>
+</body>
+</html>
