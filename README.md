@@ -6,6 +6,8 @@ Agentic Butler is a local companion for **Codex and Claude Code**. It brings wor
 
 **Alpha preview · v0.3.0a1** · Python 3.10+ · [MIT License](LICENSE)
 
+[Project overview and five-slide walkthrough](docs/project-overview.md)
+
 ## Quick start
 
 Clone the repository, open a terminal in the checkout, and install in a virtual environment. Agentic Butler has no third-party Python runtime dependencies.
