@@ -18,7 +18,7 @@ h1,h2,h3,p,figure,dl,dd { margin:0; }
 .skip:focus { transform:none; }
 .masthead { display:flex; align-items:center; justify-content:space-between; gap:1rem; min-height:4.6rem; border-bottom:1px solid var(--line); }
 .brand { display:inline-flex; align-items:center; gap:.65rem; font-weight:700; text-decoration:none; }
-.brand img { display:block; }
+.brand img { display:block; border-radius:50%; }
 .masthead nav { display:flex; align-items:center; gap:clamp(.85rem,3vw,2rem); font-size:.9rem; }
 .masthead nav a { color:var(--muted); text-decoration:none; }
 .masthead nav a:hover,.footer a:hover { color:var(--cream); text-decoration:underline; }
@@ -38,7 +38,7 @@ h1 span { color:var(--lift); }
 .compatibility { color:var(--muted); font-size:.88rem; margin-top:1.15rem; }
 .hero-art { overflow:hidden; min-width:0; border:1px solid var(--line); border-radius:.9rem; background:var(--surface); }
 .emblem-field { display:grid; min-height:17rem; place-items:center; padding:1.75rem; background:radial-gradient(ellipse at center,#322329 0%,#1c1d23 62%); }
-.emblem-field img { display:block; max-width:min(100%, 15rem); height:auto; filter:drop-shadow(0 .5rem 1.6rem #0a080a80); }
+.emblem-field img { display:block; max-width:min(100%, 15rem); height:auto; border-radius:50%; filter:drop-shadow(0 .5rem 1.6rem #0a080a80); }
 figcaption { display:flex; align-items:center; gap:.7rem; padding:.8rem 1rem; border-top:1px solid var(--line); color:var(--muted); font-size:.92rem; }
 figcaption strong { color:var(--cream); }
 .terminal-icon { color:var(--lift); font:700 .95rem ui-monospace,Consolas,monospace; }
